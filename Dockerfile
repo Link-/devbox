@@ -53,10 +53,18 @@ USER glich
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
     echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/glich/.bashrc
 
+# Install fish & gh cli
+RUN /home/linuxbrew/.linuxbrew/bin/brew install fish && \
+    /home/linuxbrew/.linuxbrew/bin/brew install gh
+
+# Make fish the default shell
+RUN sudo chsh -s /home/linuxbrew/.linuxbrew/bin/fish glich
+
 # Install starship with --yes option
 RUN sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes && \
-    echo 'eval "$(starship init bash)"' >> /home/glich/.bashrc && \
-    mkdir -p /home/glich/.config
+    mkdir -p /home/glich/.config/fish && \
+    echo 'starship init fish | source' >> ~/.config/fish/config.fish && \
+    echo 'eval "$(starship init bash)"' >> /home/glich/.bashrc
 
 # Add starship.toml
 COPY <<-EOT /home/glich/.config/starship.toml
